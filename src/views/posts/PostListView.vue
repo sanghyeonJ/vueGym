@@ -31,6 +31,9 @@ fetchPosts();
 
 const goPage = id => {
   // router.push(`/posts/${id}`);
+  // 바로 path를 넣어서 연결해줄수있다.
+
+  // 객체형태로 전달하면 name을 이용할 수 있다.
   router.push({
     name: 'postDetailName',
     params: {
