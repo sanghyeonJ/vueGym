@@ -12,11 +12,17 @@
         />
       </div>
     </div>
+    <hr class="my-4" />
+    <AppCard>
+      <PostDetailView :id="2"></PostDetailView>
+    </AppCard>
   </div>
 </template>
 
 <script setup>
 import PostItem from '@/components/posts/PostItem.vue';
+import PostDetailView from '@/views/posts/PostDetailView.vue';
+import AppCard from '@/components/AppCard.vue';
 import { ref } from 'vue';
 import { getPosts } from '@/api/posts';
 import { useRouter } from 'vue-router';
@@ -39,10 +45,10 @@ const goPage = id => {
     params: {
       id,
     },
-    query: {
-      searchText: 'hello',
-    },
-    hash: '#world',
+    // query: {
+    //   searchText: 'hello',
+    // },
+    // hash: '#world',
     // http://localhost:3000/posts/4?searchText=hello#world
   });
 };

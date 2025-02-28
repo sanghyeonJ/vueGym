@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import AboutView from '@/views/AboutView.vue';
 import PostCreateView from '@/views/posts/PostCreateView.vue';
@@ -17,8 +17,19 @@ const routes = [
 
   { path: '/posts', component: PostListView, name: 'postListName' },
   { path: '/posts/create', component: PostCreateView, name: 'postCreateName' },
-  // : 동적 라우팅 => 여러 url을 하나의 컴포넌트에 매핑
-  { path: '/posts/:id', component: PostDetailView, name: 'postDetailName' },
+  // /: 동적 라우팅 => 여러 url을 하나의 컴포넌트에 매핑
+  // props: true => /:id 와 같은 파라미터가 해당 컴포넌트에 props로 전달된다.
+  { 
+    path: '/posts/:id',
+    component: PostDetailView,
+    name: 'postDetailName',
+    props: true
+    // props: (route) => {
+    //   return {
+    //     id: parseInt(route.params.id)
+    //   }
+    // }
+  },
   { path: '/posts/:id/edit', component: PostEditView, name: 'postEditName' },
 
   { path: '/nested', component: NestedView, name: 'nestedName', children: [
@@ -32,7 +43,11 @@ const routes = [
 ];
 
 const router = createRouter({
+  // 히스토리 모드로 동작
   history: createWebHistory('/'),
+
+  // 해시모드로 동작 
+  //history: createWebHashHistory(),
   routes,
 });
 
