@@ -39,8 +39,9 @@ const posts = [
   },
 ];
 
-export function getPosts() {
-  return axios.get('http://localhost:5000/posts');
+// 정렬을 위한 파라미터 전달
+export function getPosts(params) {
+  return axios.get('http://localhost:5000/posts', {params});
 }
 
 
