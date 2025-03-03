@@ -2,7 +2,7 @@
   <div>
     <h2>Edit</h2>
     <hr class="my-4" />
-    <form @submit.prevent="edit">
+    <!-- <form @submit.prevent="edit">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" v-model="form.title" />
@@ -21,7 +21,22 @@
         </button>
         <button class="btn btn-primary">save</button>
       </div>
-    </form>
+    </form> -->
+
+    <PostForm @submit.prevent="edit" v-model:title="form.title" v-model:content="form.content">
+      <template #actions>
+        <div class="pt-4">
+          <button
+            type="button"
+            class="btn btn-outline-danger me-2"
+            @click="goDetail"
+          >
+            cancel
+          </button>
+          <button class="btn btn-primary">save</button>
+        </div>
+      </template>
+    </PostForm>
   </div>
 </template>
 
@@ -29,6 +44,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getPostById, updatePost } from '@/api/posts';
+import PostForm from '@/components/posts/PostForm.vue';
 
 const router = useRouter();
 const route = useRoute();

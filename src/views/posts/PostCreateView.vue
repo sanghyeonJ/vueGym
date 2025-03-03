@@ -2,7 +2,7 @@
   <div>
     <h2>PostCreate</h2>
     <hr class="my-4" />
-    <form @submit.prevent="save">
+    <!-- <form @submit.prevent="save">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" v-model="form.title" />
@@ -21,7 +21,22 @@
         </button>
         <button class="btn btn-primary">save</button>
       </div>
-    </form>
+    </form> -->
+    <!-- submit 이벤트는 컴포넌트의 상위태그인 form에 상속된다 -->
+    <PostForm @submit.prevent="save" v-model:title="form.title" v-model:content="form.content">
+      <template #actions>
+        <div class="pt-4">
+          <button
+            type="button"
+            class="btn btn-outline-dark me-2"
+            @click="goListPage"
+          >
+            list
+          </button>
+          <button class="btn btn-primary">save</button>
+        </div>
+      </template>
+    </PostForm>
   </div>
 </template>
 
@@ -29,6 +44,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { createPost } from '@/api/posts';
+import PostForm from '@/components/posts/PostForm.vue';
 
 const router = useRouter();
 const form = ref({
