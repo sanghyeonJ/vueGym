@@ -35,6 +35,7 @@
           :content="item.content"
           :createdAt="item.createdAt"
           @click="goPage(item.id)"
+          @modal="openModal(item)"
         />
       </template>
     </AppGrid>
@@ -57,7 +58,17 @@
         </li>
       </ul>
     </nav> -->
-    <AppPagination :current-page="params._page" :page-count="pageCount" @page="page => params._page = page" />
+    <AppPagination :current-page="params._page" :page-count="pageCount" @page="handlePage" />
+
+    <Teleport to="#modal">
+      <PostModal v-model="show" :title="modalTitle" :content="modalContent" :createdAt="modalCreatedAt" />
+    </Teleport>
+    <!-- 
+    Teleport:
+    구조상 현재 컴포넌트 내에 위치하고있지만 ui 구조상 외부에 있어야한다 
+    따라서 index.html에 modal 아이디를 가진 div를 만들어서 그 안에 넣어준다.
+    -->
+    
     <hr class="my-5" />
     <template v-if="posts.length > 0">
       <AppCard>
@@ -74,6 +85,7 @@ import AppPagination from '@/components/AppPagination.vue';
 import AppCard from '@/components/AppCard.vue';
 import AppGrid from '@/components/AppGrid.vue';
 import PostFilter from '@/components/posts/PostFilter.vue';
+import PostModal from '@/components/posts/PostModal.vue';
 
 import { computed, ref, watchEffect } from 'vue';
 import { getPosts } from '@/api/posts';
@@ -90,6 +102,7 @@ const params = ref({
 });
 const totalCount = ref(0);
 const pageCount = computed(() => Math.ceil(totalCount.value / params.value._limit));
+const handlePage = (page) => params.value._page = page;
 
 // const fetchPosts = () => {
 //   getPosts().then(response => {
@@ -130,6 +143,21 @@ const goPage = id => {
     // http://localhost:3000/posts/4?searchText=hello#world
   });
 };
+
+// modal
+const show = ref(false);
+const modalTitle = ref('');
+const modalContent = ref('');
+const modalCreatedAt = ref('');
+const openModal = ({title, content, createdAt}) => {
+  show.value = true;
+  modalTitle.value = title;
+  modalContent.value = content;
+  modalCreatedAt.value = createdAt;
+}
+// const closeModal = () => {
+//   show.value = false;
+// }
 </script>
 
 <style scoped></style>
