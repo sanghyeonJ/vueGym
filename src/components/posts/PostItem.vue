@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import AppCard from '@/components/AppCard.vue';
 // props를 선언할때 defineProps를 사용
 defineProps({
   title: {

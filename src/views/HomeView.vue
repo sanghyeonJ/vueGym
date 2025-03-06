@@ -33,8 +33,6 @@ export default {
 </script>
 
 <script setup>
-import AppCard from '@/components/AppCard.vue';
-import AppGrid from '@/components/AppGrid.vue';
 import { ref, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 // router 페이지의 이동을 제어하는 객체 (push, replace, back, forward)
