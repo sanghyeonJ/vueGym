@@ -18,6 +18,10 @@
     </form> -->
     <PostFilter v-model:title="params.title_like" v-model:limit="params._limit" />
     <hr class="my-4" />
+
+    <AppLoading v-if="loading" />
+    <AppError v-else-if="error" :message="error.message" />
+
     <!-- <div class="row g-3">
       <div class="col-4" v-for="post in posts" :key="post.id">
         <PostItem
@@ -28,38 +32,39 @@
         />
       </div>
     </div> -->
-    <AppGrid :items="posts">
-      <template v-slot="{item}">
-        <PostItem
-          :title="item.title"
-          :content="item.content"
-          :createdAt="item.createdAt"
-          @click="goPage(item.id)"
-          @modal="openModal(item)"
-        />
-      </template>
-    </AppGrid>
+    <template v-else>
+      <AppGrid :items="posts">
+        <template v-slot="{item}">
+          <PostItem
+            :title="item.title"
+            :content="item.content"
+            :createdAt="item.createdAt"
+            @click="goPage(item.id)"
+            @modal="openModal(item)"
+          />
+        </template>
+      </AppGrid>
 
 
-    <!-- <nav class="mt-5" aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" :class="{disabled: params._page === 1}">
-          <a class="page-link" href="#" aria-label="Previous" @click.prevent="--params._page">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li v-for="page in pageCount" :key="page" class="page-item" :class="{active: params._page === page}">
-          <a class="page-link" href="#" @click.prevent="params._page = page">{{ page }}</a> --> <!-- prevent를 넣으면 기본동작을 막는다 --> <!--
-        </li>
-        <li class="page-item" :class="{disabled: params._page === pageCount}">
-          <a class="page-link" href="#" aria-label="Next" @click.prevent="++params._page">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav> -->
-    <AppPagination :current-page="params._page" :page-count="pageCount" @page="handlePage" />
-
+      <!-- <nav class="mt-5" aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" :class="{disabled: params._page === 1}">
+            <a class="page-link" href="#" aria-label="Previous" @click.prevent="--params._page">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li v-for="page in pageCount" :key="page" class="page-item" :class="{active: params._page === page}">
+            <a class="page-link" href="#" @click.prevent="params._page = page">{{ page }}</a> --> <!-- prevent를 넣으면 기본동작을 막는다 --> <!--
+          </li>
+          <li class="page-item" :class="{disabled: params._page === pageCount}">
+            <a class="page-link" href="#" aria-label="Next" @click.prevent="++params._page">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav> -->
+      <AppPagination :current-page="params._page" :page-count="pageCount" @page="handlePage" />
+    </template>
     <Teleport to="#modal">
       <PostModal v-model="show" :title="modalTitle" :content="modalContent" :createdAt="modalCreatedAt" />
     </Teleport>
@@ -84,9 +89,15 @@ import PostDetailView from '@/views/posts/PostDetailView.vue';
 import PostFilter from '@/components/posts/PostFilter.vue';
 import PostModal from '@/components/posts/PostModal.vue';
 
+import AppLoading from '@/components/app/AppLoading.vue';
+import AppError from '@/components/app/AppError.vue';
+
 import { computed, ref, watchEffect } from 'vue';
 import { getPosts } from '@/api/posts';
 import { useRouter } from 'vue-router';
+
+const error = ref(null);
+const loading = ref(false);
 const router = useRouter();
 const posts = ref([]);
 // pagination 파라미터
@@ -111,11 +122,15 @@ const handlePage = (page) => params.value._page = page;
 
 const fetchPosts = async () => {
   try {
+    loading.value = true;
     const { data, headers } = await getPosts(params.value);
     posts.value = data
     totalCount.value = headers['x-total-count']  // -이 있기때문에 대괄호 문자열로 받아옴
-  } catch(error){
-    console.error('error : ' , error);
+  } catch(err){
+    console.error('error : ' , err);
+    error.value = err;
+  } finally {
+    loading.value = false;
   }
 }
 // fetchPosts();

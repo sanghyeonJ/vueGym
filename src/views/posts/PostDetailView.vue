@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <AppLoading v-if="loading" />
+  <AppError v-else-if="error" :message="error.message" />
+  <div v-else>
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
     <p class="text-muted">{{ $dayjs( post.createdAt ).format('YYYY.MM.DD HH:mm:ss') }}</p>
@@ -31,6 +33,8 @@
 import { useRouter } from 'vue-router';
 import { getPostById, deletePost } from '@/api/posts';
 import { ref } from 'vue';
+import AppLoading from '@/components/app/AppLoading.vue';
+import AppError from '@/components/app/AppError.vue';
 
 // props 전달 받기 ( router/index.js 확인 )
 const props = defineProps({
@@ -39,6 +43,8 @@ const props = defineProps({
 
 const router = useRouter();
 const post = ref({});
+const loading = ref(false);
+const error = ref(null);
 /**
  * reactive 사용시 
  * 대입 할 시 post = {...data} 로 대입해야 함
@@ -54,12 +60,16 @@ const post = ref({});
 
 const fetchPost = async() => {
   try{
+    loading.value = true;
     const {data} = await getPostById(props.id);
     setPost(data)
     // 스프레드 연산자를 사용하면 객체의 새로운 복사본이 생성되어 원본데이터와 분리됨, vue의 반응성 시스템에서 더 안정적
     // 스프레드 연산자로 객체 복사 => data가 변경되어도 post의 값이 변경되지 않음
-  } catch(error) {
-    console.error('error : ', error);
+  } catch(err){
+    console.error('error : ', err);
+    error.value = err;
+  } finally {
+    loading.value = false;
   }
 }
 const setPost = ({title, content, createdAt}) => {

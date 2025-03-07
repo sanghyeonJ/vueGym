@@ -2,6 +2,7 @@
   <div>
     <h2>PostCreate</h2>
     <hr class="my-4" />
+    <AppError v-if="error" :message="error.message" />
     <!-- <form @submit.prevent="save">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
@@ -33,7 +34,16 @@
           >
             list
           </button>
-          <button class="btn btn-primary">save</button>
+
+          <button class="btn btn-primary" :disabled="loading">
+            <template v-if="loading">
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              <span class="visually-hidden" role="status">Loading...</span>
+            </template>
+            <template v-else>
+              save
+            </template>
+          </button>
         </div>
       </template>
     </PostForm>
@@ -47,6 +57,8 @@ import { useRouter } from 'vue-router';
 import { createPost } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
 import { useAlert } from '@/composables/alert';
+import AppLoading from '@/components/app/AppLoading.vue';
+import AppError from '@/components/app/AppError.vue';
 
 const { vAlert, vSuccess } = useAlert();
 
@@ -55,17 +67,24 @@ const form = ref({
   title: null,
   content: null,
 });
-const save = () => {
+const loading = ref(false);
+const error = ref(null);
+
+const save = async () => {
   try {
-    createPost({
+    loading.value = true;
+    await createPost({
       ...form.value,
       createdAt: Date.now()
     })
     router.push({ name: 'postListName' })
     vSuccess('게시글이 저장되었습니다.');
-  } catch(error){
-    console.error('error : ' , error);
-    vAlert(error.message, 'error')
+  } catch(err){
+    console.error('error : ' , err);
+    vAlert(err.message);
+    error.value = err;
+  } finally {
+    loading.value = false;
   }
 }
 
