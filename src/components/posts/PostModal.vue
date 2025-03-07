@@ -1,6 +1,6 @@
 <template>
   <!-- <AppModal :show="show" :title="게시글" @close="closeModal"> -->
-  <AppModal v-model="show" :title="게시글">
+  <AppModal v-model="show" :title="'게시글'">
     <!-- name이 없는 경우 default로 넣어준다. -->
     <template #default>
       <div class="row g-3">

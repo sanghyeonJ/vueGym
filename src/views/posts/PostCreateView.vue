@@ -37,6 +37,7 @@
         </div>
       </template>
     </PostForm>
+    <!-- <AppAlert :items="alerts"></AppAlert> -->
   </div>
 </template>
 
@@ -45,6 +46,9 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { createPost } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
+import { useAlert } from '@/composables/alert';
+
+const { vAlert, vSuccess } = useAlert();
 
 const router = useRouter();
 const form = ref({
@@ -58,8 +62,10 @@ const save = () => {
       createdAt: Date.now()
     })
     router.push({ name: 'postListName' })
+    vSuccess('게시글이 저장되었습니다.');
   } catch(error){
     console.error('error : ' , error);
+    vAlert(error.message, 'error')
   }
 }
 
@@ -68,6 +74,16 @@ const goListPage = () => {
     name: 'postListName',
   });
 };
+// const alerts = ref([]);
+// const vAlert = (message, type = 'error') => {
+//   alerts.value.push({message, type});
+//   setTimeout(() => {
+//     alerts.value.shift();
+//   }, 2000);
+// }
+
+// const vSuccess = (message) => vAlert(message, 'success');
+// 컴포저블함수로 대체
 </script>
 
 <style scoped></style>
