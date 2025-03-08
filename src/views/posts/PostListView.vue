@@ -95,11 +95,12 @@ import AppError from '@/components/app/AppError.vue';
 import { computed, ref, watchEffect } from 'vue';
 import { getPosts } from '@/api/posts';
 import { useRouter } from 'vue-router';
+import { useAxios } from '@/composables/useAxios.js';
 
-const error = ref(null);
-const loading = ref(false);
+// const error = ref(null);
+// const loading = ref(false);
 const router = useRouter();
-const posts = ref([]);
+//const posts = ref([]);
 // pagination 파라미터
 const params = ref({
   _sort: 'createdAt',
@@ -108,7 +109,8 @@ const params = ref({
   _page: 1,
   title_like: ''
 });
-const totalCount = ref(0);
+// const totalCount = ref(0);
+const totalCount = computed(() => response.value.headers['x-total-count']);
 const pageCount = computed(() => Math.ceil(totalCount.value / params.value._limit));
 const handlePage = (page) => params.value._page = page;
 
@@ -119,22 +121,23 @@ const handlePage = (page) => params.value._page = page;
 //     console.error('error : ', error);
 //   })
 // };
-
-const fetchPosts = async () => {
-  try {
-    loading.value = true;
-    const { data, headers } = await getPosts(params.value);
-    posts.value = data
-    totalCount.value = headers['x-total-count']  // -이 있기때문에 대괄호 문자열로 받아옴
-  } catch(err){
-    console.error('error : ' , err);
-    error.value = err;
-  } finally {
-    loading.value = false;
-  }
-}
+const { data: posts, error, loading, response } = useAxios('/posts', { params })
+// useAxios 컴포저블 함수 사용
+// const fetchPosts = async () => {
+//   try {
+//     loading.value = true;
+//     const { data, headers } = await getPosts(params.value);
+//     posts.value = data
+//     totalCount.value = headers['x-total-count']  // -이 있기때문에 대괄호 문자열로 받아옴
+//   } catch(err){
+//     console.error('error : ' , err);
+//     error.value = err;
+//   } finally {
+//     loading.value = false;
+//   }
+// }
 // fetchPosts();
-watchEffect(fetchPosts)
+// watchEffect(fetchPosts)
 // watchEffect는 watch와 다르게 처음에 한번 실행한다.
 // fetchPosts 내부의 반응형 상태가 변경되었을때 해당 함수를 다시 실행할 수 있다.
 

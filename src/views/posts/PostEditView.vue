@@ -62,53 +62,74 @@ import AppLoading from '@/components/app/AppLoading.vue';
 import AppError from '@/components/app/AppError.vue';
 import AppAlert from '@/components/app/AppAlert.vue';
 import { useAlert } from '@/composables/alert';
-
+import { useAxios } from '@/composables/useAxios.js';
 const { vAlert, vSuccess } = useAlert();
 
 const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
-const loading = ref(false);
-const error = ref(null);
+// const loading = ref(false);
+// const error = ref(null);
 
-const form = ref({
-  title: null,
-  content: null,
-});
-const fetchPost = async() => {
-  try{
-    loading.value = true;
-    const {data} = await getPostById(id);
-    setForm(data)
-  } catch(error){
-    console.error('error : ', error);
-    error.value = error;
-  } finally {
-    loading.value = false;
-  }
-}
-const setForm = ({title, content}) => {
-  form.value.title = title;
-  form.value.content = content;
-}
-fetchPost();
+// const form = ref({
+//   title: null,
+//   content: null,
+// });
 
-const editError = ref(null);
-const editLoading = ref(false);
-const edit = async () => {
-  try{
-    editLoading.value = true;
-    await updatePost(id, {...form.value});
-    vSuccess('수정이 완료되었습니다.');
+const { data: form, error, loading } = useAxios(`/posts/${id}`)
+
+// const fetchPost = async() => {
+//   try{
+//     loading.value = true;
+//     const {data} = await getPostById(id);
+//     setForm(data)
+//   } catch(error){
+//     console.error('error : ', error);
+//     error.value = error;
+//   } finally {
+//     loading.value = false;
+//   }
+// }
+// const setForm = ({title, content}) => {
+//   form.value.title = title;
+//   form.value.content = content;
+// }
+// fetchPost();
+
+
+const { error: editError, loading: editLoading, execute } = useAxios(`/posts/${id}`, { method: 'patch' }, {
+  immediate: false,
+  onSuccess: () => {
     router.push({ name: 'postDetailName', params: {id} })
-  } catch(err){
-    console.error('error : ' , err);
-    editError.value = err;
-      vAlert(err.message);
-  } finally {
-    editLoading.value = false;
+    vSuccess('수정이 완료되었습니다.');
+  },
+  onError: (err) => {
+    vAlert(err.message);
   }
+});
+
+const edit = () => {
+  execute({
+    ...form.value,
+  })
 }
+
+// const editError = ref(null);
+// const editLoading = ref(false);
+// const edit = async () => {
+//   try{
+//     editLoading.value = true;
+//     await updatePost(id, {...form.value});
+//     vSuccess('수정이 완료되었습니다.');
+//     router.push({ name: 'postDetailName', params: {id} })
+//   } catch(err){
+//     console.error('error : ' , err);
+//     editError.value = err;
+//       vAlert(err.message);
+//   } finally {
+//     editLoading.value = false;
+//   }
+// }
 
 const goDetail = () => {
   router.push({
