@@ -75,7 +75,7 @@
     -->
     
     <hr class="my-5" />
-    <template v-if="posts.length > 0">
+    <template v-if="posts?.length > 0">
       <AppCard>
         <PostDetailView :id="posts[0].id"></PostDetailView>
       </AppCard>
