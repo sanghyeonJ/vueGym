@@ -3,6 +3,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
+// pinia 추가
+import { createPinia } from 'pinia';
+
 // 플러그인 등록
 import funcPlugins from './plugins/func';
 import objPlugins from './plugins/obj';
@@ -30,6 +33,7 @@ app.use(globalComponents);
 app.use(globalDirective);
 app.use(dayjs);
 app.use(router);
+app.use(createPinia());
 app.mount('#app');
 
 import 'bootstrap/dist/js/bootstrap.js';
