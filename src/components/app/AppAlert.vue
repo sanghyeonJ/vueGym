@@ -8,21 +8,30 @@
   <!-- <div class="app-alert">
     <div v-for="({message, type}, index) in items" :key="index" class="alert" :class="typeStyle(type)" role="alert">{{ message }}</div>
   </div> -->
-  <div class="app-alert">
+  <!-- <div class="app-alert">
     <TransitionGroup name="slide">
       <div v-for="({message, type}, index) in items" :key="index" class="alert" :class="typeStyle(type)" role="alert">{{ message }}</div>
+    </TransitionGroup>
+  </div> -->
+  <div class="app-alert">
+    <TransitionGroup name="slide">
+      <div v-for="({message, type}, index) in alerts" :key="index" class="alert" :class="typeStyle(type)" role="alert">{{ message }}</div>
     </TransitionGroup>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import { useAlert } from '@/composables/alert';
 
-defineProps({
-  items: {
-    type: Array,
-  }
-})
+const {alerts} = useAlert();
+
+// pinia사용으로 불필요
+// defineProps({
+//   items: {
+//     type: Array,
+//   }
+// })
 
 // 매개변수로 type을 받아야 하기 때문에 computed를 사용할수 없다
 const typeStyle = (type) => {
