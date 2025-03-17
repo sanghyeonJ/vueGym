@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { getPostById, deletePost } from '@/api/posts';
 import { ref } from 'vue';
 import { useAxios } from '@/composables/useAxios.js';
@@ -113,6 +113,21 @@ const goEditPage = () => {
     },
   });
 };
+
+onBeforeRouteUpdate(() => {
+    console.log('onBeforeRouteUpdate')
+});
+onBeforeRouteLeave(() => {
+    console.log('onBeforeRouteLeave')
+})
 </script>
+
+<!-- <script>
+export default{
+    beforeRouteEnter(){
+        console.log('beforeRouteEnter')
+    }
+}
+</script> -->
 
 <style scoped></style>

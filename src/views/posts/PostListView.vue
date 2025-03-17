@@ -16,7 +16,7 @@
         </div>
       </div>
     </form> -->
-    <PostFilter v-model:title="params.title_like" v-model:limit="params._limit" />
+    <PostFilter v-model:title="params.title_like" :limit="params._limit" @update:limit="changeLimit" />
     <hr class="my-4" />
 
     <AppLoading v-if="loading" />
@@ -113,6 +113,11 @@ const params = ref({
 const totalCount = computed(() => response.value.headers['x-total-count']);
 const pageCount = computed(() => Math.ceil(totalCount.value / params.value._limit));
 const handlePage = (page) => params.value._page = page;
+
+const changeLimit = (value) => {
+    params.value._limit = value;
+    params.value._page = 1;
+}
 
 // const fetchPosts = () => {
 //   getPosts().then(response => {
